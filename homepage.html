@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow - Modern To-Do App</title>
+    <title>Python Technical Interview Quiz</title>
     <style>
         * {
             margin: 0;
@@ -12,429 +12,978 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
             width: 100%;
-            max-width: 480px;
-            padding: 32px;
-            animation: slideIn 0.6s ease-out;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            border-radius: 20px 20px 0 0;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
 
         .header h1 {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.1rem;
-            font-weight: 400;
+            color: #7f8c8d;
+            font-size: 1.2em;
         }
 
-        .input-section {
-            margin-bottom: 32px;
-        }
-
-        .input-container {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .task-input {
+        .progress-bar {
             width: 100%;
-            padding: 16px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            outline: none;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .task-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .task-input:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+        .option:hover {
+            background: #e8f4fd;
+            border-color: #45b7d1;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(69, 183, 209, 0.2);
         }
 
-        .add-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        .option.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+        }
+
+        .option.correct {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-color: #4ecdc4;
+            color: white;
+        }
+
+        .option.incorrect {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border-color: #ff6b6b;
+            color: white;
+        }
+
+        .option-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 16px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .add-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .add-btn:active {
-            transform: translateY(0);
-        }
-
-        .tasks-section {
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .task-count {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .task-item {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            animation: taskSlideIn 0.4s ease-out;
-        }
-
-        @keyframes taskSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .task-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-item.completed {
+        .btn:disabled {
             opacity: 0.6;
+            cursor: not-allowed;
             transform: none;
         }
 
-        .task-item.completed:hover {
-            transform: none;
+        .btn.next {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
         }
 
-        .task-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+        .btn.next:hover {
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
         }
 
-        .task-checkbox:hover {
-            border-color: #4ecdc4;
-        }
-
-        .task-checkbox.checked {
-            background: #4ecdc4;
-            border-color: #4ecdc4;
-        }
-
-        .task-checkbox.checked::after {
-            content: '✓';
-            color: white;
-            font-size: 12px;
+        .score-display {
+            text-align: center;
+            font-size: 1.2em;
+            color: #667eea;
             font-weight: bold;
         }
 
-        .task-text {
-            flex-grow: 1;
-            color: white;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .task-text.completed {
-            text-decoration: line-through;
-            opacity: 0.7;
-        }
-
-        .task-delete {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 107, 107, 0.2);
-            border: none;
-            border-radius: 50%;
-            color: #ff6b6b;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .task-delete:hover {
-            background: #ff6b6b;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 16px;
+        .results {
             text-align: center;
+            padding: 40px;
         }
 
-        .stat-number {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 4px;
+        .results h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
 
-        .stat-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.8rem;
-            font-weight: 500;
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .empty-state {
+        .explanation {
+            background: #f8f9fa;
+            border-left: 4px solid #4ecdc4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            text-align: left;
+        }
+
+        .explanation h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .start-screen {
             text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.6);
+            padding: 60px 40px;
         }
 
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
+        .start-screen h1 {
+            font-size: 3em;
+            color: #2c3e50;
+            margin-bottom: 20px;
         }
 
-        .empty-state h3 {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
+        .start-screen p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            line-height: 1.8;
         }
 
-        .empty-state p {
-            font-size: 0.9rem;
+        .quiz-info {
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 24px;
+        .quiz-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .quiz-info ul {
+            list-style: none;
+            color: #7f8c8d;
+        }
+
+        .quiz-info li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .quiz-info li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 30px 20px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 2em;
             }
             
-            .stats {
-                grid-template-columns: 1fr;
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>TaskFlow</h1>
-            <p>Stay organized, stay productive</p>
+    <div class="quiz-container">
+        <div id="startScreen" class="start-screen">
+            <h1>🐍 Python Technical Interview Quiz</h1>
+            <p>Test your Python knowledge with these carefully selected interview questions</p>
+            
+            <div class="quiz-info">
+                <h3>Quiz Information</h3>
+                <ul>
+                    <li>35 challenging Python questions</li>
+                    <li>Multiple choice format</li>
+                    <li>Covers basic to advanced topics</li>
+                    <li>Includes decorators, generators, async/await</li>
+                    <li>Exception handling and OOP concepts</li>
+                    <li>Instant feedback and explanations</li>
+                    <li>Perfect for technical interview preparation</li>
+                </ul>
+            </div>
+            
+            <button class="btn" onclick="startQuiz()">Start Quiz</button>
         </div>
 
-        <div class="input-section">
-            <div class="input-container">
-                <input type="text" class="task-input" placeholder="What needs to be done?" id="taskInput">
-            </div>
-            <button class="add-btn" onclick="addTask()">Add Task</button>
-        </div>
-
-        <div class="tasks-section">
-            <div class="section-title">
-                Tasks
-                <span class="task-count" id="taskCount">0</span>
-            </div>
-            <div class="task-list" id="taskList">
-                <div class="empty-state">
-                    <div class="icon">📝</div>
-                    <h3>No tasks yet</h3>
-                    <p>Add your first task to get started!</p>
+        <div id="quizScreen" style="display: none;">
+            <div class="header">
+                <h1>Python Technical Quiz</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
                 </div>
             </div>
+
+            <div class="question-section">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question-text" id="questionText"></div>
+                <div id="codeBlock" class="code-block" style="display: none;"></div>
+            </div>
+
+            <div class="options" id="optionsContainer"></div>
+
+            <div id="explanation" class="explanation" style="display: none;">
+                <h4>Explanation:</h4>
+                <p id="explanationText"></p>
+            </div>
+
+            <div class="controls">
+                <div class="score-display">
+                    Score: <span id="currentScore">0</span>/<span id="totalQuestions">20</span>
+                </div>
+                <button class="btn next" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+            </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalTasks">0</div>
-                <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="completedTasks">0</div>
-                <div class="stat-label">Completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="pendingTasks">0</div>
-                <div class="stat-label">Pending</div>
-            </div>
+        <div id="resultsScreen" class="results" style="display: none;">
+            <h2>🎉 Quiz Complete!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <button class="btn" onclick="restartQuiz()">Take Quiz Again</button>
         </div>
     </div>
 
     <script>
-        let tasks = [];
-        let taskIdCounter = 1;
+        const questions = [
+            {
+                question: "What will be the output of this code?",
+                code: `def add_item(item, item_list=[]):
+    item_list.append(item)
+    return item_list
 
-        function addTask() {
-            const taskInput = document.getElementById('taskInput');
-            const taskText = taskInput.value.trim();
+print(add_item(1))
+print(add_item(2))`,
+                options: ["A. [1] and [2]", "B. [1] and [1, 2]", "C. [1, 2] and [1, 2, 3]", "D. Error"],
+                correct: 1,
+                explanation: "The list item_list is mutable and persists between function calls."
+            },
+            {
+                question: "What will this decorator do?",
+                code: `def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Before function call")
+        result = func(*args, **kwargs)
+        print("After function call")
+        return result
+    return wrapper
+
+@my_decorator
+def say_hello(name):
+    print(f"Hello, {name}!")
+
+say_hello("Alice")`,
+                options: ["A. Only prints 'Hello, Alice!'", "B. Prints before, hello, and after messages", "C. Causes an error", "D. Prints only before and after messages"],
+                correct: 1,
+                explanation: "The decorator wraps the function and executes code before and after the original function call."
+            },
+            {
+                question: "What is the output of this generator?",
+                code: `def fibonacci_gen():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+gen = fibonacci_gen()
+print(next(gen))
+print(next(gen))
+print(next(gen))`,
+                options: ["A. 0, 1, 1", "B. 1, 1, 2", "C. 0, 1, 2", "D. Error"],
+                correct: 0,
+                explanation: "The generator yields Fibonacci numbers starting with 0, 1, 1, 2, 3..."
+            },
+            {
+                question: "What happens with this exception handling?",
+                code: `try:
+    x = 10 / 0
+except ZeroDivisionError:
+    print("Division by zero!")
+except Exception as e:
+    print(f"Error: {e}")
+else:
+    print("No errors occurred")
+finally:
+    print("This always runs")`,
+                options: ["A. Prints division by zero and finally message", "B. Prints error message and finally message", "C. Only prints finally message", "D. Prints all messages"],
+                correct: 0,
+                explanation: "ZeroDivisionError is caught first, then finally block always executes. The else block is skipped when an exception occurs."
+            },
+            {
+                question: "What does this lambda function return?",
+                code: `numbers = [1, 2, 3, 4, 5]
+result = list(map(lambda x: x**2 if x % 2 == 0 else x, numbers))
+print(result)`,
+                options: ["A. [1, 4, 3, 16, 5]", "B. [1, 2, 3, 4, 5]", "C. [1, 4, 9, 16, 25]", "D. [2, 4, 6, 8, 10]"],
+                correct: 0,
+                explanation: "The lambda squares even numbers and leaves odd numbers unchanged."
+            },
+            {
+                question: "What will be the output of this class example?",
+                code: `class Counter:
+    def __init__(self):
+        self.count = 0
+    
+    def __call__(self):
+        self.count += 1
+        return self.count
+
+c = Counter()
+print(c())
+print(c())`,
+                options: ["A. 0, 1", "B. 1, 2", "C. 0, 0", "D. Error"],
+                correct: 1,
+                explanation: "The __call__ method makes the instance callable like a function, incrementing count each time."
+            },
+            {
+                question: "What is the result of this list slicing?",
+                code: `lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+print(lst[2:8:2])
+print(lst[::-2])`,
+                options: ["A. [2, 4, 6] and [9, 7, 5, 3, 1]", "B. [2, 4, 6, 8] and [9, 7, 5, 3, 1]", "C. [2, 4, 6] and [8, 6, 4, 2, 0]", "D. Error"],
+                correct: 0,
+                explanation: "First slice takes elements 2,4,6 with step 2. Second slice reverses list with step -2."
+            },
+            {
+                question: "What does this context manager do?",
+                code: `class MyContext:
+    def __enter__(self):
+        print("Entering context")
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("Exiting context")
+        return False
+
+with MyContext() as ctx:
+    print("Inside context")`,
+                options: ["A. Only prints 'Inside context'", "B. Prints entering, inside, and exiting messages", "C. Causes an error", "D. Only prints entering and exiting"],
+                correct: 1,
+                explanation: "Context managers execute __enter__ on entry, the with block code, then __exit__ on exit."
+            },
+            {
+                question: "What is the output of this multiple inheritance example?",
+                code: `class A:
+    def method(self):
+        print("A")
+
+class B(A):
+    def method(self):
+        print("B")
+
+class C(A):
+    def method(self):
+        print("C")
+
+class D(B, C):
+    pass
+
+d = D()
+d.method()`,
+                options: ["A. A", "B. B", "C. C", "D. Error"],
+                correct: 1,
+                explanation: "Python follows Method Resolution Order (MRO). D inherits from B first, so B's method is called."
+            },
+            {
+                question: "What will this property decorator output?",
+                code: `class Temperature:
+    def __init__(self):
+        self._celsius = 0
+    
+    @property
+    def celsius(self):
+        return self._celsius
+    
+    @celsius.setter
+    def celsius(self, value):
+        self._celsius = value
+    
+    @property
+    def fahrenheit(self):
+        return (self._celsius * 9/5) + 32
+
+t = Temperature()
+t.celsius = 25
+print(t.fahrenheit)`,
+                options: ["A. 25", "B. 77.0", "C. 298", "D. Error"],
+                correct: 1,
+                explanation: "The fahrenheit property calculates (25 * 9/5) + 32 = 77.0"
+            },
+            {
+                question: "What happens when you run this code?",
+                code: `x = 10
+
+def foo():
+    print(x)
+    x = 5
+
+foo()`,
+                options: ["A. 10", "B. 5", "C. Error: UnboundLocalError", "D. Nothing is printed"],
+                correct: 2,
+                explanation: "Python treats x as a local variable because it's assigned inside the function, so print(x) fails."
+            },
+            {
+                question: "What is the output of this closure example?",
+                code: `def outer(x):
+    def inner(y):
+        return x + y
+    return inner
+
+add_10 = outer(10)
+add_5 = outer(5)
+print(add_10(3))
+print(add_5(3))`,
+                options: ["A. 13, 8", "B. 3, 3", "C. 10, 5", "D. Error"],
+                correct: 0,
+                explanation: "Closures capture the variable x from the outer scope. add_10 remembers x=10, add_5 remembers x=5."
+            },
+            {
+                question: "What will this yield statement produce?",
+                code: `def number_generator():
+    for i in range(3):
+        yield i * 2
+
+gen = number_generator()
+print(list(gen))`,
+                options: ["A. [0, 1, 2]", "B. [0, 2, 4]", "C. [2, 4, 6]", "D. Error"],
+                correct: 1,
+                explanation: "The generator yields i*2 for i in range(3), producing 0*2, 1*2, 2*2 = [0, 2, 4]."
+            },
+            {
+                question: "What does this metaclass do?",
+                code: `class SingletonMeta(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class Database(metaclass=SingletonMeta):
+    def __init__(self):
+        self.connection = "Connected"
+
+db1 = Database()
+db2 = Database()
+print(db1 is db2)`,
+                options: ["A. True", "B. False", "C. Error", "D. None"],
+                correct: 0,
+                explanation: "The metaclass implements the Singleton pattern, ensuring only one instance exists."
+            },
+            {
+                question: "What is the output of this descriptor example?",
+                code: `class Descriptor:
+    def __get__(self, obj, objtype):
+        return "Getting value"
+    
+    def __set__(self, obj, value):
+        print(f"Setting value to {value}")
+
+class MyClass:
+    attr = Descriptor()
+
+obj = MyClass()
+obj.attr = 42
+print(obj.attr)`,
+                options: ["A. 42, Getting value", "B. Setting value to 42, Getting value", "C. Error", "D. None, Getting value"],
+                correct: 1,
+                explanation: "Descriptors control attribute access. __set__ is called on assignment, __get__ on access."
+            },
+            {
+                question: "What is the result of this memory and performance question?",
+                code: `import sys
+
+list_comp = [x for x in range(1000)]
+gen_expr = (x for x in range(1000))
+
+print(sys.getsizeof(list_comp) > sys.getsizeof(gen_expr))`,
+                options: ["A. True", "B. False", "C. Error", "D. Depends on system"],
+                correct: 0,
+                explanation: "List comprehensions create all items in memory immediately, while generators create items on-demand, using less memory."
+            },
+            {
+                question: "What does this async/await code do?",
+                code: `import asyncio
+
+async def fetch_data():
+    await asyncio.sleep(1)
+    return "Data fetched"
+
+async def main():
+    result = await fetch_data()
+    print(result)
+
+# asyncio.run(main())  # This would print "Data fetched" after 1 second`,
+                options: ["A. Prints immediately", "B. Prints after 1 second delay", "C. Causes an error", "D. Blocks forever"],
+                correct: 1,
+                explanation: "async/await enables asynchronous programming. await asyncio.sleep(1) pauses execution for 1 second."
+            },
+            {
+                question: "What is the output of this function annotation example?",
+                code: `def greet(name: str, age: int = 25) -> str:
+    return f"Hello {name}, you are {age} years old"
+
+print(greet("Alice"))
+print(greet.__annotations__)`,
+                options: ["A. Hello Alice, you are 25 years old and empty dict", "B. Hello Alice, you are 25 years old and annotations dict", "C. Error due to type hints", "D. Only the annotations dict"],
+                correct: 1,
+                explanation: "Type hints are stored in __annotations__ but don't affect runtime behavior. Default parameter age=25 is used."
+            },
+            {
+                question: "What will this dataclass produce?",
+                code: `from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: int
+    y: int
+    
+    def distance_from_origin(self):
+        return (self.x**2 + self.y**2)**0.5
+
+p = Point(3, 4)
+print(p.distance_from_origin())`,
+                options: ["A. 5.0", "B. 7", "C. 25", "D. Error"],
+                correct: 0,
+                explanation: "Dataclass automatically generates __init__. Distance from origin for (3,4) is sqrt(3²+4²) = 5.0."
+            },
+            {
+                question: "What does this namedtuple do?",
+                code: `from collections import namedtuple
+
+Person = namedtuple('Person', ['name', 'age'])
+p = Person('Alice', 30)
+print(p.name)
+print(p[0])
+print(p._replace(age=31))`,
+                options: ["A. Alice, Alice, Person(name='Alice', age=31)", "B. Alice, Alice, error", "C. Error on creation", "D. Alice, 30, Person(name='Alice', age=31)"],
+                correct: 0,
+                explanation: "namedtuple creates immutable objects with named fields accessible by name or index. _replace creates a new instance."
+            },
+            {
+                question: "Will this code run?",
+                code: `d = {'a': 1, 'b': 2}
+print(d.get('c', 3))
+print(d['c'])`,
+                options: ["A. Yes, it prints 3 and raises KeyError", "B. No, both lines raise KeyError", "C. Yes, it prints 3 and None", "D. Yes, it prints 3 and 3"],
+                correct: 0,
+                explanation: "get() returns the default, but ['c'] fails if key is missing."
+            },
+            {
+                question: "What are the outputs of both print statements?",
+                code: `t = (1)
+print(type(t))
+
+t = (1,)
+print(type(t))`,
+                options: ["A. <class 'int'> and <class 'int'>", "B. <class 'tuple'> and <class 'tuple'>", "C. <class 'int'> and <class 'tuple'>", "D. Error"],
+                correct: 2,
+                explanation: "(1) is just an integer with parentheses; (1,) is a tuple."
+            },
+            {
+                question: "What will be printed?",
+                code: `def calc(x, y):
+    return x + y
+
+print(calc('2', '3'))
+print(calc(2, 3))`,
+                options: ["A. '23' and '5'", "B. 5 and '23'", "C. '23' and 5", "D. Error"],
+                correct: 2,
+                explanation: "String concatenation and integer addition."
+            },
+            {
+                question: "What happens?",
+                code: `s = "hello"
+s[0] = 'H'
+print(s)`,
+                options: ["A. 'Hello'", "B. 'hello'", "C. Error: Strings are immutable", "D. 'H'"],
+                correct: 2,
+                explanation: "Strings are immutable in Python."
+            },
+            {
+                question: "What is the output?",
+                code: `a = set([1, 2, 3])
+b = set([3, 4, 5])
+print(a & b)
+print(a | b)`,
+                options: ["A. {1, 2} and {3, 4, 5}", "B. {3} and {1, 2, 3, 4, 5}", "C. [3] and [1, 2, 3, 4, 5]", "D. Error"],
+                correct: 1,
+                explanation: "& is intersection, | is union."
+            },
+            {
+                question: "What is the output?",
+                code: `x = 0
+y = 1
+print(x and y)
+print(x or y)`,
+                options: ["A. 1 and 0", "B. 0 and 1", "C. True and False", "D. False and True"],
+                correct: 1,
+                explanation: "x and y returns first falsy value, x or y returns first truthy."
+            },
+            {
+                question: "What gets printed?",
+                code: `for i in range(5):
+    if i == 3:
+        break
+else:
+    print("Completed loop")
+
+print("Done")`,
+                options: ["A. Completed loop, Done", "B. Done", "C. Break", "D. Error"],
+                correct: 1,
+                explanation: "else is skipped because of break."
+            },
+            {
+                question: "What will be the output?",
+                code: `matrix = [[1, 2], [3, 4], [5, 6]]
+flat = [num for row in matrix for num in row]
+print(flat)`,
+                options: ["A. [[1, 2], [3, 4], [5, 6]]", "B. [1, 2, 3, 4, 5, 6]", "C. [1, 3, 5, 2, 4, 6]", "D. [[1], [2], [3], [4], [5], [6]]"],
+                correct: 1,
+                explanation: "The nested list comprehension flattens the matrix."
+            },
+            {
+                question: "What will be printed?",
+                code: `def modify(data):
+    data.append(100)
+    data = [200]
+    return data
+
+lst = [1, 2, 3]
+print(modify(lst))
+print(lst)`,
+                options: ["A. [200] and [1, 2, 3]", "B. [200] and [1, 2, 3, 100]", "C. [1, 2, 3, 100] and [200]", "D. [1, 2, 3, 100] and [1, 2, 3, 100]"],
+                correct: 1,
+                explanation: "List is modified before reassigning data."
+            },
+            {
+                question: "What is the output?",
+                code: `words = ['apple', 'banana', 'cherry']
+length_map = {word: len(word) for word in words}
+print(length_map)`,
+                options: ["A. {'apple': 6, 'banana': 7, 'cherry': 8}", "B. {5, 6, 6}", "C. {'apple': 5, 'banana': 6, 'cherry': 6}", "D. {'apple': 5, 'banana': 6, 'cherry': 6}"],
+                correct: 2,
+                explanation: "Maps words to their lengths correctly."
+            },
+            {
+                question: "How is the list sorted?",
+                code: `data = ['apple', 'fig', 'banana', 'cherry']
+data.sort(key=lambda x: len(x))
+print(data)`,
+                options: ["A. Alphabetically", "B. By string length", "C. By ASCII value", "D. Reversed"],
+                correct: 1,
+                explanation: "The key argument tells sort() to sort based on length."
+            },
+            {
+                question: "What is the output?",
+                code: `a = [[0]*3]*3
+a[0][0] = 1
+print(a)`,
+                options: ["A. [[1, 0, 0], [0, 0, 0], [0, 0, 0]]", "B. [[1, 0, 0], [1, 0, 0], [1, 0, 0]]", "C. [[0, 0, 0], [0, 0, 0], [1, 0, 0]]", "D. [[1], [0], [0]]"],
+                correct: 1,
+                explanation: "All sublists point to the same object in memory."
+            },
+            {
+                question: "What is the output?",
+                code: `def fact(n):
+    if n == 0:
+        return 1
+    return n * fact(n-1)
+
+print(fact(4))`,
+                options: ["A. 24", "B. 120", "C. 12", "D. Error"],
+                correct: 0,
+                explanation: "4*3*2*1 = 24."
+            },
+            {
+                question: "What is printed?",
+                code: `gen = (x*x for x in range(4))
+for i in gen:
+    print(i, end=' ')`,
+                options: ["A. 0 1 2 3", "B. 1 4 9 16", "C. 0 1 4 9", "D. Error"],
+                correct: 2,
+                explanation: "Squares of 0, 1, 2, 3 yielded lazily."
+            },
+            {
+                question: "What is the output?",
+                code: `class Demo:
+    count = 0
+    def __init__(self):
+        Demo.count += 1
+
+a = Demo()
+b = Demo()
+print(Demo.count)`,
+                options: ["A. 1", "B. 2", "C. 0", "D. Error"],
+                correct: 1,
+                explanation: "count is a class variable shared across instances."
+            },
+            {
+                question: "What are the outputs?",
+                code: `s = "abcdef"
+print(s[::2])
+print(s[::-1])`,
+                options: ["A. ace, fedcba", "B. abc, abcdef", "C. bdf, fedcba", "D. Error"],
+                correct: 0,
+                explanation: "s[::2] skips every 2nd character, s[::-1] reverses the string."
+            },
+            {
+                question: "What is printed?",
+                code: `s = {x for x in range(10) if x % 3 == 0}
+print(s)`,
+                options: ["A. {3, 6, 9}", "B. {0, 3, 6, 9}", "C. [0, 3, 6, 9]", "D. Error"],
+                correct: 1,
+                explanation: "Includes only numbers divisible by 3 from 0 to 9."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = -1;
+        let answered = false;
+
+        function startQuiz() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentScore').textContent = score;
+            document.getElementById('totalQuestions').textContent = questions.length;
             
-            if (taskText === '') return;
-
-            const task = {
-                id: taskIdCounter++,
-                text: taskText,
-                completed: false
-            };
-
-            tasks.push(task);
-            taskInput.value = '';
-            renderTasks();
-            updateStats();
-        }
-
-        function toggleTask(taskId) {
-            const task = tasks.find(t => t.id === taskId);
-            if (task) {
-                task.completed = !task.completed;
-                renderTasks();
-                updateStats();
+            // Show code block if exists
+            if (question.code) {
+                document.getElementById('codeBlock').style.display = 'block';
+                document.getElementById('codeBlock').textContent = question.code;
+            } else {
+                document.getElementById('codeBlock').style.display = 'none';
             }
-        }
-
-        function deleteTask(taskId) {
-            tasks = tasks.filter(t => t.id !== taskId);
-            renderTasks();
-            updateStats();
-        }
-
-        function renderTasks() {
-            const taskList = document.getElementById('taskList');
             
-            if (tasks.length === 0) {
-                taskList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📝</div>
-                        <h3>No tasks yet</h3>
-                        <p>Add your first task to get started!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            taskList.innerHTML = tasks.map(task => `
-                <div class="task-item ${task.completed ? 'completed' : ''}">
-                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
-                    <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
-                    <button class="task-delete" onclick="deleteTask(${task.id})">×</button>
-                </div>
-            `).join('');
+            // Update progress bar
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Create options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `<span class="option-label">${option.charAt(0)}</span>${option.substring(2)}`;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Reset state
+            selectedAnswer = -1;
+            answered = false;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('explanation').style.display = 'none';
         }
 
-        function updateStats() {
-            const totalTasks = tasks.length;
-            const completedTasks = tasks.filter(t => t.completed).length;
-            const pendingTasks = totalTasks - completedTasks;
-
-            document.getElementById('taskCount').textContent = totalTasks;
-            document.getElementById('totalTasks').textContent = totalTasks;
-            document.getElementById('completedTasks').textContent = completedTasks;
-            document.getElementById('pendingTasks').textContent = pendingTasks;
+        function selectAnswer(index) {
+            if (answered) return;
+            
+            selectedAnswer = index;
+            const options = document.querySelectorAll('.option');
+            const question = questions[currentQuestion];
+            
+            // Clear previous selections
+            options.forEach(option => option.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected option
+            options[index].classList.add('selected');
+            
+            // Check if answer is correct
+            if (index === question.correct) {
+                score++;
+                options[index].classList.add('correct');
+                document.getElementById('currentScore').textContent = score;
+            } else {
+                options[index].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+            }
+            
+            // Show explanation
+            document.getElementById('explanationText').textContent = question.explanation;
+            document.getElementById('explanation').style.display = 'block';
+            
+            answered = true;
+            document.getElementById('nextBtn').disabled = false;
         }
 
-        // Add task on Enter key press
-        document.getElementById('taskInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addTask();
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
             }
-        });
+        }
 
-        // Initialize
-        updateStats();
+        function showResults() {
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = '🌟 Excellent! You have a strong grasp of Python concepts!';
+            } else if (percentage >= 70) {
+                message = '👍 Good job! You understand most Python concepts well.';
+            } else if (percentage >= 50) {
+                message = '📚 Not bad! Keep studying to improve your Python skills.';
+            } else {
+                message = '💪 Keep learning! Review the concepts and try again.';
+            }
+            
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = -1;
+            answered = false;
+            
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
     </script>
 </body>
 </html>
