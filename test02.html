@@ -213,6 +213,16 @@
             color: #667eea;
         }
 
+        .option.correct .option-label {
+            background: white;
+            color: #4caf50;
+        }
+
+        .option.incorrect .option-label {
+            background: white;
+            color: #f44336;
+        }
+
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -254,6 +264,14 @@
 
         .btn.danger:hover {
             background: #d32f2f;
+        }
+
+        .btn.success {
+            background: #4caf50;
+        }
+
+        .btn.success:hover {
+            background: #45a049;
         }
 
         .progress-bar {
@@ -318,18 +336,50 @@
             background: linear-gradient(135deg, #f44336, #d32f2f);
         }
 
-        .hidden {
-            display: none;
+        .review-screen {
+            padding: 30px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
+        .review-question {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .review-question.correct {
+            border-left: 4px solid #4caf50;
+        }
+
+        .review-question.incorrect {
+            border-left: 4px solid #f44336;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .review-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .review-status.correct {
+            background: #e8f5e8;
+            color: #4caf50;
+        }
+
+        .review-status.incorrect {
+            background: #ffebee;
+            color: #f44336;
         }
 
         .explanation {
@@ -348,6 +398,33 @@
         .explanation p {
             color: #333;
             line-height: 1.6;
+        }
+
+        .correct-answer {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .correct-answer h4 {
+            color: #4caf50;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         @media (max-width: 768px) {
@@ -436,7 +513,19 @@
                 <span id="finalScore">0%</span>
             </div>
             <div id="resultDetails"></div>
-            <button class="btn" onclick="restartTest()">Take Another Test</button>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn success" onclick="showReview()">Review Answers</button>
+                <button class="btn" onclick="restartTest()">Take Another Test</button>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="reviewScreen" class="review-screen hidden">
+            <div class="header" style="margin: -30px -30px 30px -30px; padding: 20px 30px;">
+                <h2>📋 Answer Review</h2>
+                <button class="btn" onclick="backToResults()" style="position: absolute; right: 30px; top: 20px;">Back to Results</button>
+            </div>
+            <div id="reviewContainer"></div>
         </div>
     </div>
 
@@ -824,64 +913,4 @@ print(Counter("caterpillar"))`,
             const percentage = Math.round((correctAnswers / testData.length) * 100);
             const timeTaken = Math.round((Date.now() - testStartTime) / 1000);
             
-            // Show results
-            showResults(correctAnswers, percentage, timeTaken);
-        }
-
-        function showResults(correct, percentage, timeTaken) {
-            document.getElementById('testScreen').classList.add('hidden');
-            document.getElementById('resultsScreen').classList.remove('hidden');
-            
-            const scoreCircle = document.getElementById('scoreCircle');
-            const finalScore = document.getElementById('finalScore');
-            
-            // Set score color based on performance
-            if (percentage >= 80) {
-                scoreCircle.className = 'score-circle score-excellent';
-            } else if (percentage >= 60) {
-                scoreCircle.className = 'score-circle score-good';
-            } else {
-                scoreCircle.className = 'score-circle score-average';
-            }
-            
-            finalScore.textContent = percentage + '%';
-            
-            const minutes = Math.floor(timeTaken / 60);
-            const seconds = timeTaken % 60;
-            
-            document.getElementById('resultDetails').innerHTML = `
-                <p><strong>Correct Answers:</strong> ${correct} out of ${testData.length}</p>
-                <p><strong>Time Taken:</strong> ${minutes}m ${seconds}s</p>
-                <p><strong>Performance:</strong> ${getPerformanceMessage(percentage)}</p>
-            `;
-        }
-
-        function getPerformanceMessage(percentage) {
-            if (percentage >= 90) return "Outstanding! 🌟";
-            if (percentage >= 80) return "Excellent work! 🎯";
-            if (percentage >= 70) return "Good job! 👍";
-            if (percentage >= 60) return "Not bad, keep practicing! 📚";
-            return "Keep studying and try again! 💪";
-        }
-
-        function restartTest() {
-            // Reset all variables
-            currentQuestion = 0;
-            userAnswers = [];
-            timeLeft = 30 * 60;
-            
-            // Show start screen
-            document.getElementById('resultsScreen').classList.add('hidden');
-            document.getElementById('startScreen').classList.remove('hidden');
-        }
-
-        // Prevent cheating by disabling right-click and keyboard shortcuts
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-            }
-        });
-    </script>
-</body>
-</html>
+            //
