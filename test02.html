@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechPrep - MCQ Test Platform</title>
+    <title>CodePrep - Interactive MCQ Test</title>
     <style>
         * {
             margin: 0;
@@ -15,112 +15,62 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: #333;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 800px;
-            width: 90%;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
             text-align: center;
-            position: relative;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
-            pointer-events: none;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
+            color: white;
+            font-size: 3rem;
             margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .test-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-card {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .info-card h3 {
-            color: #667eea;
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        .info-card p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .timer-section {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 15px;
-            text-align: center;
+            color: rgba(255,255,255,0.9);
             font-size: 1.2rem;
-            font-weight: 600;
         }
 
-        .content {
-            padding: 30px;
+        .test-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
         .question-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #667eea;
+            margin-bottom: 30px;
+            animation: slideIn 0.5s ease-out;
         }
 
         .question-header {
@@ -131,96 +81,118 @@
         }
 
         .question-number {
-            background: #667eea;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
             color: white;
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .question-type {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
         }
 
         .question-text {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2c3e50;
         }
 
         .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
             margin: 15px 0;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             overflow-x: auto;
+            border-left: 4px solid #4299e1;
         }
 
-        .options {
+        .options-container {
             display: grid;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .option {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
         }
 
         .option:hover {
-            background: #e3f2fd;
             border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .option.selected {
-            background: #667eea;
             border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
 
         .option.correct {
-            background: #4caf50;
-            border-color: #4caf50;
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
         }
 
         .option.incorrect {
-            background: #f44336;
             border-color: #f44336;
+            background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .option-label {
-            background: #667eea;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
             font-weight: 600;
+            margin-right: 10px;
         }
 
-        .option.selected .option-label {
-            background: white;
-            color: #667eea;
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .option.correct .option-label {
-            background: white;
-            color: #4caf50;
+        .feedback.correct {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #4CAF50;
+            color: #155724;
         }
 
-        .option.incorrect .option-label {
-            background: white;
-            color: #f44336;
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+            border: 1px solid #f44336;
+            color: #721c24;
+        }
+
+        .feedback h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .feedback p {
+            margin-bottom: 8px;
         }
 
         .navigation {
@@ -228,226 +200,137 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
         }
 
-        .btn {
-            background: #667eea;
-            color: white;
+        .nav-btn {
+            padding: 12px 24px;
             border: none;
-            padding: 12px 25px;
             border-radius: 25px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: white;
         }
 
-        .btn:hover {
-            background: #5a67d8;
+        .nav-btn.prev {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+        }
+
+        .nav-btn.next {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .nav-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .btn:disabled {
-            background: #ccc;
+        .nav-btn:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
-        .btn.danger {
-            background: #f44336;
-        }
-
-        .btn.danger:hover {
-            background: #d32f2f;
-        }
-
-        .btn.success {
-            background: #4caf50;
-        }
-
-        .btn.success:hover {
-            background: #45a049;
-        }
-
-        .progress-bar {
-            background: #e9ecef;
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .start-screen {
+        .score-display {
             text-align: center;
-            padding: 40px;
-        }
-
-        .start-screen h2 {
-            color: #333;
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .start-screen p {
-            color: #666;
             font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            color: #666;
         }
 
-        .results-screen {
+        .results {
             text-align: center;
             padding: 40px;
+            animation: bounceIn 1s ease-out;
         }
 
-        .score-circle {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
+        .results h2 {
             font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
+            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
-        .score-excellent {
-            background: linear-gradient(135deg, #4caf50, #45a049);
-        }
-
-        .score-good {
-            background: linear-gradient(135deg, #ff9800, #f57c00);
-        }
-
-        .score-average {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
-        }
-
-        .review-screen {
-            padding: 30px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .review-question {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .review-question.correct {
-            border-left: 4px solid #4caf50;
-        }
-
-        .review-question.incorrect {
-            border-left: 4px solid #f44336;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .results .score {
+            font-size: 3rem;
+            font-weight: bold;
             margin-bottom: 20px;
         }
 
-        .review-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
+        .results .score.excellent {
+            color: #4CAF50;
         }
 
-        .review-status.correct {
-            background: #e8f5e8;
-            color: #4caf50;
+        .results .score.good {
+            color: #FF9800;
         }
 
-        .review-status.incorrect {
-            background: #ffebee;
+        .results .score.needs-improvement {
             color: #f44336;
         }
 
-        .explanation {
-            background: #f0f8ff;
-            border: 1px solid #b3d9ff;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
+        .restart-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transition: all 0.3s ease;
         }
 
-        .explanation h4 {
-            color: #0066cc;
-            margin-bottom: 10px;
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .explanation p {
-            color: #333;
-            line-height: 1.6;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .correct-answer {
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .correct-answer h4 {
-            color: #4caf50;
-            margin-bottom: 10px;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .hidden {
-            display: none;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
             100% { transform: scale(1); }
         }
 
         @media (max-width: 768px) {
             .container {
-                width: 95%;
-                margin: 10px;
+                padding: 10px;
             }
             
             .header h1 {
                 font-size: 2rem;
             }
             
-            .info-grid {
-                grid-template-columns: 1fr;
+            .test-container {
+                padding: 20px;
             }
             
-            .navigation {
-                flex-direction: column;
-                gap: 15px;
+            .question-text {
+                font-size: 1.1rem;
             }
             
-            .btn {
-                width: 100%;
+            .code-block {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -455,84 +338,31 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 TechPrep</h1>
-            <p>Master Your Technical Interview Skills</p>
+            <h1>🚀 CodePrep</h1>
+            <p>Master your interview skills with interactive MCQ tests</p>
         </div>
 
-        <!-- Start Screen -->
-        <div id="startScreen" class="start-screen">
-            <h2>Welcome to Python & Data Structures Test</h2>
-            <p>Test your knowledge with carefully curated questions covering Python concepts, data structures, and algorithms. Perfect for placement preparation!</p>
-            
-            <div class="test-info">
-                <div class="info-grid">
-                    <div class="info-card">
-                        <h3>20</h3>
-                        <p>Questions</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>30</h3>
-                        <p>Minutes</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>Medium-Hard</h3>
-                        <p>Difficulty</p>
-                    </div>
+        <div class="test-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="questionContainer"></div>
+
+            <div class="navigation">
+                <button class="nav-btn prev" id="prevBtn" onclick="previousQuestion()">← Previous</button>
+                <div class="score-display">
+                    <span id="currentQuestion">1</span> / <span id="totalQuestions">20</span>
                 </div>
+                <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next →</button>
             </div>
-            
-            <button class="btn pulse" onclick="startTest()">Start Test</button>
-        </div>
-
-        <!-- Test Screen -->
-        <div id="testScreen" class="hidden">
-            <div class="timer-section">
-                <div>⏱️ Time Remaining: <span id="timer">30:00</span></div>
-            </div>
-            
-            <div class="content">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                
-                <div id="questionContainer"></div>
-                
-                <div class="navigation">
-                    <button class="btn" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
-                    <span id="questionCounter">Question 1 of 20</span>
-                    <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
-                    <button class="btn danger hidden" id="submitBtn" onclick="submitTest()">Submit Test</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Results Screen -->
-        <div id="resultsScreen" class="results-screen hidden">
-            <h2>Test Completed! 🎉</h2>
-            <div id="scoreCircle" class="score-circle">
-                <span id="finalScore">0%</span>
-            </div>
-            <div id="resultDetails"></div>
-            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
-                <button class="btn success" onclick="showReview()">Review Answers</button>
-                <button class="btn" onclick="restartTest()">Take Another Test</button>
-            </div>
-        </div>
-
-        <!-- Review Screen -->
-        <div id="reviewScreen" class="review-screen hidden">
-            <div class="header" style="margin: -30px -30px 30px -30px; padding: 20px 30px;">
-                <h2>📋 Answer Review</h2>
-                <button class="btn" onclick="backToResults()" style="position: absolute; right: 30px; top: 20px;">Back to Results</button>
-            </div>
-            <div id="reviewContainer"></div>
         </div>
     </div>
 
     <script>
-        // Test data based on the provided questions
-        const testData = [
+        const questions = [
             {
+                type: "Conceptual",
                 question: "What is the output of the following code?",
                 code: `def func(a, L=[]):
     L.append(a)
@@ -551,6 +381,7 @@ print(func(3))`,
                 explanation: "Python evaluates default arguments only once at function definition time. So the list persists across calls. Use None to avoid this."
             },
             {
+                type: "Conceptual",
                 question: "What will be the output of the following code?",
                 code: `a = [1, 2, 3]
 b = a
@@ -559,13 +390,14 @@ print(b)`,
                 options: [
                     "[1, 2, 3]",
                     "[1, 2, 3, 4, 5]",
-                    "[4, 5]",
-                    "Error"
+                    "Error",
+                    "None"
                 ],
                 correct: 1,
                 explanation: "a and b point to the same list. The += operation modifies the list in-place."
             },
             {
+                type: "Data Structures",
                 question: "What is the average and worst-case time complexity for searching in a set?",
                 options: [
                     "O(1) average, O(n) worst",
@@ -574,21 +406,39 @@ print(b)`,
                     "O(1) average, O(1) worst"
                 ],
                 correct: 0,
-                explanation: "Sets use hash tables internally. Average case is O(1) due to direct hashing. Worst case is O(n) when many collisions occur."
+                explanation: "Sets use hash tables internally. Average case is O(1) due to direct hashing, but collisions can degrade performance to O(n) in the worst case."
             },
             {
+                type: "Code Tracing",
                 question: "What is the output of the following code?",
                 code: `print("".join(sorted("abc", reverse=True)))`,
                 options: [
                     "abc",
                     "cba",
-                    "bac",
+                    "bca",
                     "Error"
                 ],
                 correct: 1,
                 explanation: "sorted() returns a reversed list of characters ['c', 'b', 'a'], and join() concatenates them into 'cba'."
             },
             {
+                type: "Data Structures",
+                question: "What is the output of the following code?",
+                code: `import heapq
+nums = [3, 1, 4, 1, 5]
+heapq.heapify(nums)
+print(nums[0])`,
+                options: [
+                    "1",
+                    "3",
+                    "5",
+                    "4"
+                ],
+                correct: 0,
+                explanation: "heapq.heapify() converts a list into a min-heap in-place. The smallest element (1) is at the root, which is nums[0]."
+            },
+            {
+                type: "Conceptual",
                 question: "What is the output of the following code?",
                 code: `x = 5
 def outer():
@@ -607,24 +457,10 @@ print(outer())`,
                     "11"
                 ],
                 correct: 3,
-                explanation: "nonlocal binds to the outer()'s local variable x (10). inner() increments it to 11 and returns it."
+                explanation: "nonlocal binds to the outer()'s local variable x (which is 10). The inner function increments it to 11."
             },
             {
-                question: "What is the output of the following code?",
-                code: `import heapq
-nums = [3, 1, 4, 1, 5]
-heapq.heapify(nums)
-print(nums[0])`,
-                options: [
-                    "1",
-                    "3",
-                    "5",
-                    "4"
-                ],
-                correct: 0,
-                explanation: "heapq.heapify() converts a list into a min-heap in-place. The smallest element (1) is at the root, which is nums[0]."
-            },
-            {
+                type: "Data Structures",
                 question: "Which data structure is best suited for checking balanced parentheses in an expression?",
                 options: [
                     "Queue",
@@ -636,39 +472,7 @@ print(nums[0])`,
                 explanation: "Stacks work on LIFO (Last-In-First-Out), which matches the requirement of checking whether every opening bracket has a matching closing one in the correct order."
             },
             {
-                question: "What is the time complexity of searching for an element in a balanced binary search tree (BST)?",
-                options: [
-                    "O(n)",
-                    "O(log n)",
-                    "O(1)",
-                    "O(n log n)"
-                ],
-                correct: 1,
-                explanation: "In a balanced BST (like AVL or Red-Black tree), each comparison allows skipping half the remaining tree, leading to O(log n) time."
-            },
-            {
-                question: "Which of the following operations is NOT O(1) in a Python list?",
-                options: [
-                    "list.append(x)",
-                    "list.pop()",
-                    "list.pop(0)",
-                    "list[-1]"
-                ],
-                correct: 2,
-                explanation: "pop(0) removes the first item, which causes all subsequent elements to shift left—making it O(n)."
-            },
-            {
-                question: "What is the correct in-order traversal of the following tree?\n\n     4\n    / \\\n   2   5\n  / \\\n 1   3",
-                options: [
-                    "4, 2, 1, 3, 5",
-                    "1, 2, 3, 4, 5",
-                    "2, 1, 3, 5, 4",
-                    "1, 3, 2, 4, 5"
-                ],
-                correct: 1,
-                explanation: "In-order traversal follows Left → Root → Right pattern, so: 1, 2, 3, 4, 5."
-            },
-            {
+                type: "Conceptual",
                 question: "What is the output of the following code?",
                 code: `def f():
     try:
@@ -684,233 +488,191 @@ print(f())`,
                     "None"
                 ],
                 correct: 1,
-                explanation: "The finally block overrides the return value in the try block, so the function returns 2."
+                explanation: "The finally block always executes and its return statement overrides the return in the try block."
             },
             {
-                question: "Which Python module allows you to implement a thread-safe queue?",
+                type: "Data Structures",
+                question: "What is the time complexity of searching for an element in a balanced binary search tree (BST)?",
                 options: [
-                    "queue",
-                    "collections",
-                    "heapq",
-                    "deque"
-                ],
-                correct: 0,
-                explanation: "The queue module provides FIFO, LIFO, and priority queues with thread-safety for multi-threaded programs."
-            },
-            {
-                question: "What is the time complexity of inserting an element in a hash table (average and worst case)?",
-                options: [
-                    "O(log n), O(log n)",
-                    "O(1), O(n)",
-                    "O(n), O(1)",
-                    "O(n), O(n log n)"
-                ],
-                correct: 1,
-                explanation: "Average case: O(1) due to direct indexing using hash functions. Worst case: O(n) if many collisions occur."
-            },
-            {
-                question: "What data structure is ideal for implementing a LRU (Least Recently Used) cache?",
-                options: [
-                    "Stack and Queue",
-                    "Hash Map and Linked List",
-                    "Heap and Stack",
-                    "Queue only"
-                ],
-                correct: 1,
-                explanation: "A Hash Map provides O(1) access and a Doubly Linked List helps maintain order for eviction. Python's OrderedDict implements this efficiently."
-            },
-            {
-                question: "In Python, which data structure maintains the order of insertion and allows O(1) deletion from both ends?",
-                options: [
-                    "list",
-                    "set",
-                    "deque",
-                    "dict"
-                ],
-                correct: 2,
-                explanation: "collections.deque supports O(1) append and pop operations on both ends, unlike lists, which are O(n) for popping from the front."
-            },
-            {
-                question: "Which of the following is NOT a self-balancing binary search tree?",
-                options: [
-                    "Red-Black Tree",
-                    "AVL Tree",
-                    "Binary Heap",
-                    "Splay Tree"
-                ],
-                correct: 2,
-                explanation: "A Binary Heap is a complete binary tree used for priority queues, but not a BST and does not support in-order traversal."
-            },
-            {
-                question: "What is the time complexity of finding the minimum element in a Min-Heap?",
-                options: [
-                    "O(1)",
-                    "O(log n)",
                     "O(n)",
+                    "O(log n)",
+                    "O(1)",
                     "O(n log n)"
                 ],
-                correct: 0,
-                explanation: "In a Min-Heap, the minimum element is always at the root (index 0), so lookup is O(1). Insertions and deletions are O(log n)."
+                correct: 1,
+                explanation: "In a balanced BST (like AVL or Red-Black tree), each comparison allows skipping half the remaining tree, leading to O(log n) time."
             },
             {
-                question: "What is the maximum number of nodes in a binary tree of height h? (Assuming root at height 0)",
+                type: "Data Structures",
+                question: "Which of the following operations is NOT O(1) in a Python list?",
                 options: [
-                    "2^h",
-                    "2^h - 1",
-                    "2^(h+1) - 1",
-                    "h^2"
+                    "list.append(x)",
+                    "list.pop()",
+                    "list.pop(0)",
+                    "list[-1]"
                 ],
                 correct: 2,
-                explanation: "Maximum nodes in a binary tree = 2^(h+1) - 1. This is a property of complete binary trees."
-            },
-            {
-                question: "Which of these structures guarantees O(log n) time for insertion, deletion, and lookup in all cases?",
-                options: [
-                    "Hash Table",
-                    "AVL Tree",
-                    "Skip List",
-                    "Binary Search Tree (unbalanced)"
-                ],
-                correct: 1,
-                explanation: "AVL Trees are self-balancing BSTs that maintain strict balance using rotations, guaranteeing O(log n) time for basic operations."
-            },
-            {
-                question: "What is the output of the following code?",
-                code: `from collections import Counter
-print(Counter("caterpillar"))`,
-                options: [
-                    "{'c': 1, 'a': 2, 't': 1, 'e': 1, 'r': 2, 'p': 1, 'i': 1, 'l': 2}",
-                    "{'a': 2, 'l': 2, 'c': 1, 't': 1, 'e': 1, 'r': 2, 'p': 1, 'i': 1}",
-                    "{'caterpillar': 1}",
-                    "Error"
-                ],
-                correct: 1,
-                explanation: "Counter counts the frequency of each character in the string. The order may vary, but the counts are: a=2, l=2, r=2, and others=1."
+                explanation: "pop(0) removes the first item, which causes all subsequent elements to shift left—making it O(n). Other operations are O(1)."
             }
         ];
 
-        // Test session management
-        let currentQuestion = 0;
-        let userAnswers = [];
-        let timeLeft = 30 * 60; // 30 minutes in seconds
-        let timerInterval;
-        let testStartTime;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = [];
+        let showingResults = false;
 
-        function startTest() {
-            document.getElementById('startScreen').classList.add('hidden');
-            document.getElementById('testScreen').classList.remove('hidden');
-            
-            // Initialize user answers array
-            userAnswers = new Array(testData.length).fill(null);
-            
-            // Start timer
-            testStartTime = Date.now();
-            startTimer();
-            
-            // Show first question
-            showQuestion(0);
-            updateProgress();
+        function initTest() {
+            selectedAnswers = new Array(questions.length).fill(null);
+            currentQuestionIndex = 0;
+            score = 0;
+            showingResults = false;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            displayQuestion();
         }
 
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    submitTest();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function showQuestion(index) {
-            const question = testData[index];
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
             const container = document.getElementById('questionContainer');
             
-            let codeBlock = question.code ? `<div class="code-block">${question.code}</div>` : '';
-            
             let optionsHTML = '';
-            question.options.forEach((option, i) => {
-                const isSelected = userAnswers[index] === i;
+            question.options.forEach((option, index) => {
+                const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                const isCorrect = index === question.correct;
+                const isIncorrect = selectedAnswers[currentQuestionIndex] !== null && 
+                                  selectedAnswers[currentQuestionIndex] === index && 
+                                  !isCorrect;
+                
+                let optionClass = 'option';
+                if (selectedAnswers[currentQuestionIndex] !== null) {
+                    optionClass += ' disabled';
+                    if (isCorrect) optionClass += ' correct';
+                    if (isIncorrect) optionClass += ' incorrect';
+                } else if (isSelected) {
+                    optionClass += ' selected';
+                }
+
                 optionsHTML += `
-                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${i})">
-                        <div class="option-label">${String.fromCharCode(65 + i)}</div>
-                        <div>${option}</div>
+                    <div class="${optionClass}" onclick="selectOption(${index})">
+                        <span class="option-label">${String.fromCharCode(65 + index)})</span>
+                        ${option}
                     </div>
                 `;
             });
-            
+
+            let feedbackHTML = '';
+            if (selectedAnswers[currentQuestionIndex] !== null) {
+                const isCorrect = selectedAnswers[currentQuestionIndex] === question.correct;
+                feedbackHTML = `
+                    <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                        <h4>${isCorrect ? '✅ Correct!' : '❌ Incorrect'}</h4>
+                        ${!isCorrect ? `<p><strong>Correct Answer:</strong> ${String.fromCharCode(65 + question.correct)}) ${question.options[question.correct]}</p>` : ''}
+                        <p><strong>Explanation:</strong> ${question.explanation}</p>
+                    </div>
+                `;
+            }
+
             container.innerHTML = `
                 <div class="question-card">
                     <div class="question-header">
-                        <div class="question-number">Question ${index + 1}</div>
+                        <div class="question-number">Question ${currentQuestionIndex + 1}</div>
+                        <div class="question-type">${question.type}</div>
                     </div>
                     <div class="question-text">${question.question}</div>
-                    ${codeBlock}
-                    <div class="options">
+                    ${question.code ? `<div class="code-block">${question.code}</div>` : ''}
+                    <div class="options-container">
                         ${optionsHTML}
                     </div>
+                    ${feedbackHTML}
                 </div>
             `;
-            
-            // Update navigation
-            document.getElementById('prevBtn').disabled = index === 0;
-            document.getElementById('nextBtn').style.display = index === testData.length - 1 ? 'none' : 'inline-block';
-            document.getElementById('submitBtn').classList.toggle('hidden', index !== testData.length - 1);
-            document.getElementById('questionCounter').textContent = `Question ${index + 1} of ${testData.length}`;
-        }
 
-        function selectOption(optionIndex) {
-            userAnswers[currentQuestion] = optionIndex;
-            
-            // Update visual selection
-            document.querySelectorAll('.option').forEach((option, index) => {
-                option.classList.toggle('selected', index === optionIndex);
-            });
-            
+            updateNavigation();
             updateProgress();
         }
 
+        function selectOption(optionIndex) {
+            if (selectedAnswers[currentQuestionIndex] !== null) return;
+
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            
+            if (optionIndex === questions[currentQuestionIndex].correct) {
+                score++;
+            }
+
+            displayQuestion();
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Test';
+                nextBtn.disabled = selectedAnswers[currentQuestionIndex] === null;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.disabled = selectedAnswers[currentQuestionIndex] === null;
+            }
+
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
         function nextQuestion() {
-            if (currentQuestion < testData.length - 1) {
-                currentQuestion++;
-                showQuestion(currentQuestion);
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResults();
             }
         }
 
         function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                showQuestion(currentQuestion);
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
             }
         }
 
-        function updateProgress() {
-            const answered = userAnswers.filter(answer => answer !== null).length;
-            const progress = (answered / testData.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+        function showResults() {
+            showingResults = true;
+            const percentage = Math.round((score / questions.length) * 100);
+            let scoreClass = 'needs-improvement';
+            let message = 'Keep practicing! 📚';
+            
+            if (percentage >= 80) {
+                scoreClass = 'excellent';
+                message = 'Outstanding! 🎉';
+            } else if (percentage >= 60) {
+                scoreClass = 'good';
+                message = 'Good job! 👍';
+            }
+
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="results">
+                    <h2>${message}</h2>
+                    <div class="score ${scoreClass}">${score}/${questions.length}</div>
+                    <p style="font-size: 1.2rem; margin-bottom: 30px;">You scored ${percentage}%</p>
+                    <button class="restart-btn" onclick="restartTest()">Take Test Again</button>
+                </div>
+            `;
+
+            document.querySelector('.navigation').style.display = 'none';
         }
 
-        function submitTest() {
-            clearInterval(timerInterval);
-            
-            // Calculate score
-            let correctAnswers = 0;
-            testData.forEach((question, index) => {
-                if (userAnswers[index] === question.correct) {
-                    correctAnswers++;
-                }
-            });
-            
-            const percentage = Math.round((correctAnswers / testData.length) * 100);
-            const timeTaken = Math.round((Date.now() - testStartTime) / 1000);
-            
-            //
+        function restartTest() {
+            document.querySelector('.navigation').style.display = 'flex';
+            initTest();
+        }
+
+        // Initialize the test when page loads
+        window.onload = initTest;
+    </script>
+</body>
+</html>
